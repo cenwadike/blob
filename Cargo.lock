@@ -386,7 +386,6 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang",
  "borsh 1.4.0",
- "solana-program",
 ]
 
 [[package]]
