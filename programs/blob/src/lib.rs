@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("MdipYrupGnHNeJgYrtNM5p1wChqeNMZ5RRwPdrqAn3W");
+declare_id!("65HYZvHRH68nuqhrYmpqTLmdYy5Ex43PzT4fBAVp6EdF");
 
 #[program]
 pub mod blob {
@@ -11,6 +11,13 @@ pub mod blob {
     }
 
     pub fn update_blob(ctx: Context<Update>, data: String) -> Result<()> {
+        let blob_account = &mut ctx.accounts.blob_account;
+        blob_account.data = data.as_bytes().to_vec();
+
+        Ok(())
+    }
+
+    pub fn unsigned_update_blob(ctx: Context<Update>, data: String) -> Result<()> {
         let blob_account = &mut ctx.accounts.blob_account;
         blob_account.data = data.as_bytes().to_vec();
 
@@ -41,6 +48,12 @@ pub struct Update<'info> {
     pub blob_account: Account<'info, Blob>,
     #[account(mut)]
     pub user: Signer<'info>,
+}
+
+#[derive(Accounts)]
+pub struct UnsigedUpdate<'info> {
+    #[account(mut, seeds = [b"blob"], bump)]
+    pub blob_account: Account<'info, Blob>,
 }
 
 #[account]

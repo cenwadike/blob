@@ -92,11 +92,49 @@ describe("blob", () => {
     );
 
     // call update
-    let data = "big";
+    let data = "data";
     const tx = await program.methods.updateBlob(data).accounts({
       blobAccount: blobPDA,
       user: user.publicKey
     }).signers([userSig]).rpc();
+
+    console.log("Your transaction signature", tx);
+  });
+
+  it("Is unsigned updating!", async () => {
+    // blob account 
+    const [blobPDA, _a] = PublicKey.findProgramAddressSync(
+      [
+        anchor.utils.bytes.utf8.encode("blob"),
+      ],
+      program.programId
+    )
+
+    // signer account
+    const user = anchor.web3.Keypair.generate();
+
+    // fund user account for gas
+    await provider.connection.confirmTransaction(
+      await provider.connection.requestAirdrop(
+        provider.wallet.publicKey,
+        10 * LAMPORTS_PER_SOL
+      ),
+      "confirmed"
+    );
+
+    await provider.connection.confirmTransaction(
+      await provider.connection.requestAirdrop(
+        user.publicKey,
+        10 * LAMPORTS_PER_SOL
+      ),
+      "confirmed"
+    );
+
+    // call update
+    let data = "another data";
+    const tx = await program.methods.unsignedUpdateBlob(data).accounts({
+      blobAccount: blobPDA,
+    }).rpc();
 
     console.log("Your transaction signature", tx);
   });
