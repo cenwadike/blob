@@ -14,13 +14,15 @@ pub mod blob {
         let blob_account = &mut ctx.accounts.blob_account;
         blob_account.data = data.as_bytes().to_vec();
 
+        emit!(UpdatedBlob { data });
         Ok(())
     }
 
-    pub fn unsigned_update_blob(ctx: Context<Update>, data: String) -> Result<()> {
+    pub fn unsigned_update_blob(ctx: Context<UnsignedUpdate>, data: String) -> Result<()> {
         let blob_account = &mut ctx.accounts.blob_account;
         blob_account.data = data.as_bytes().to_vec();
 
+        emit!(UpdatedBlob { data });
         Ok(())
     }
 }
@@ -51,7 +53,7 @@ pub struct Update<'info> {
 }
 
 #[derive(Accounts)]
-pub struct UnsigedUpdate<'info> {
+pub struct UnsignedUpdate<'info> {
     #[account(mut, seeds = [b"blob"], bump)]
     pub blob_account: Account<'info, Blob>,
 }
@@ -63,4 +65,9 @@ pub struct Blob {
 
 impl Blob {
     pub const LEN: usize = (1 + 32);
+}
+
+#[event]
+pub struct UpdatedBlob {
+    pub data: String,
 }
